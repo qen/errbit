@@ -1,4 +1,4 @@
-class DeployObserver < Mongoid::Observer
+class DeployObserver < ActiveRecord::Observer
   observe :deploy
 
   def after_create deploy

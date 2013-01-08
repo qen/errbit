@@ -2,9 +2,7 @@
 # determined to refer to the same Error (Errbit groups
 # notices into errs by a notice's fingerprint.)
 
-class Err
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Err < ActiveRecord::Base
 
   field :error_class, :default => "UnknownError"
   field :component

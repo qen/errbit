@@ -1,6 +1,4 @@
-class Watcher
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Watcher < ActiveRecord::Base
 
   field :email
 

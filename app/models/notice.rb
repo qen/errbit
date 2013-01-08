@@ -1,9 +1,7 @@
 require 'hoptoad'
 require 'recurse'
 
-class Notice
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Notice < ActiveRecord::Base
 
   field :message
   field :server_environment, :type => Hash

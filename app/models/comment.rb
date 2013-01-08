@@ -1,6 +1,4 @@
-class Comment
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Comment < ActiveRecord::Base
 
   after_create :increase_counter_cache
   before_destroy :decrease_counter_cache

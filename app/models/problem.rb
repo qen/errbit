@@ -2,9 +2,7 @@
 # reported as various Errs, but the user has grouped the
 # Errs together as belonging to the same problem.
 
-class Problem
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Problem < ActiveRecord::Base
 
   field :last_notice_at, :type => DateTime, :default => Proc.new { Time.now }
   field :first_notice_at, :type => DateTime, :default => Proc.new { Time.now }
@@ -45,7 +43,7 @@ class Problem
   scope :unresolved, where(:resolved => false)
   scope :ordered, order_by(:last_notice_at.desc)
   scope :for_apps, lambda {|apps| where(:app_id.in => apps.all.map(&:id))}
-  
+
   validates_presence_of :last_notice_at, :first_notice_at
 
 
@@ -113,7 +111,7 @@ class Problem
     else raise("\"#{sort}\" is not a recognized sort")
     end
   end
-  
+
   def self.in_date_range(date_range)
     where(:first_notice_at.lte => date_range.end).where("$or" => [{:resolved_at => nil}, {:resolved_at.gte => date_range.begin}])
   end
@@ -141,7 +139,7 @@ class Problem
     first_notice = notices.order_by([:created_at, :asc]).first
     last_notice = notices.order_by([:created_at, :asc]).last
     notice ||= first_notice
-    
+
     attrs = {}
     attrs[:first_notice_at] = first_notice.created_at if first_notice
     attrs[:last_notice_at] = last_notice.created_at if last_notice

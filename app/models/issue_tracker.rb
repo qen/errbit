@@ -1,6 +1,5 @@
-class IssueTracker
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class IssueTracker < ActiveRecord::Base
+
   include HashHelper
   include Rails.application.routes.url_helpers
   default_url_options[:host] = ActionMailer::Base.default_url_options[:host]

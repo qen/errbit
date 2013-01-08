@@ -1,4 +1,4 @@
-class NoticeObserver < Mongoid::Observer
+class NoticeObserver < ActiveRecord::Observer
   observe :notice
 
   def after_create notice

@@ -1,6 +1,4 @@
-class Backtrace
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Backtrace < ActiveRecord::Base
 
   field :fingerprint
   index :fingerprint

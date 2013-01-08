@@ -1,6 +1,4 @@
-class App
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class App < ActiveRecord::Base
   include Comparable
 
   field :name, :type => String

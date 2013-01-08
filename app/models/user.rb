@@ -1,7 +1,5 @@
-class User
+class User < ActiveRecord::Base
   PER_PAGE = 30
-  include Mongoid::Document
-  include Mongoid::Timestamps
 
   devise *Errbit::Config.devise_modules
 

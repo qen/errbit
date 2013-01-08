@@ -1,6 +1,4 @@
-class Deploy
-  include Mongoid::Document
-  include Mongoid::Timestamps
+class Deploy < ActiveRecord::Base
 
   field :username
   field :repository

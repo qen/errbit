@@ -2,6 +2,7 @@ class CreateApps < ActiveRecord::Migration
   def change
     create_table :apps do |t|
       t.string :name
+      t.string :api_key
       t.string :github_repo
       t.string :bitbucket_repo
       t.string :repository_branch

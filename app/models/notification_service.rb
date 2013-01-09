@@ -1,4 +1,4 @@
-class NotificationService < ActiveRecrod::Base
+class NotificationService < ActiveRecord::Base
 
   include Rails.application.routes.url_helpers
   default_url_options[:host] = ActionMailer::Base.default_url_options[:host]

@@ -38,8 +38,8 @@ class Notice < ActiveRecord::Base
 
   validates_presence_of :backtrace, :server_environment, :notifier
 
-  scope :ordered, order_by('created_at asc')
-  scope :reverse_ordered, order_by('created_at desc')
+  scope :ordered, order('created_at asc')
+  scope :reverse_ordered, order('created_at desc')
   scope :for_errs, lambda {|errs| where(:err_id.in => errs.all.map(&:id))}
 
   def user_agent

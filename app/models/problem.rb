@@ -33,7 +33,7 @@ class Problem < ActiveRecord::Base
 #  index :resolved_at
 #  index :notices_count
 
-  belongs_to :app, inverse_id: :problems
+  belongs_to :app, inverse_of: :problems
   has_many :errs, :inverse_of => :problem, :dependent => :destroy
   has_many :comments, :inverse_of => :err, :dependent => :destroy
 
@@ -42,7 +42,7 @@ class Problem < ActiveRecord::Base
 
   scope :resolved, where(:resolved => true)
   scope :unresolved, where(:resolved => false)
-  scope :ordered, order_by([:last_notice_at, :desc])
+  scope :ordered, order("last_notice_at desc")
   scope :for_apps, lambda {|apps| where(:app_id.in => apps.all.map(&:id))}
 
   validates_presence_of :last_notice_at, :first_notice_at

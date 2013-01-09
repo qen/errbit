@@ -9,7 +9,7 @@ class Deploy < ActiveRecord::Base
 #  index :created_at, Mongo::DESCENDING
 #
 #  embedded_in :app, :inverse_of => :deploys
-  belongs_to :app, inverse_of: deploys
+  belongs_to :app, inverse_of: :deploys
 
   after_create :resolve_app_errs, :if => :should_resolve_app_errs?
   after_create :store_cached_attributes_on_problems

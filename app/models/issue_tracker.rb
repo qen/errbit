@@ -25,8 +25,6 @@ class IssueTracker < ActiveRecord::Base
   end
 
   # Allows us to set the issue tracker class from a single form.
-  def type; self._type; end
-  def type=(t); self._type=t; end
 
   def url; nil; end
 

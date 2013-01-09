@@ -5,6 +5,7 @@ class CreateIssueTrackers < ActiveRecord::Migration
       t.string :project_id
       t.string :alt_project_id
       t.string :api_token
+      t.string :type
       t.string :account
       t.string :username
       t.string :password

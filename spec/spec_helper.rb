@@ -24,7 +24,7 @@ RSpec.configure do |config|
   config.alias_example_to :fit, :focused => true
 
   config.before(:each) do
-    DatabaseCleaner[:mongoid].strategy = :truncation
+    DatabaseCleaner[:active_record].strategy = :truncation
     DatabaseCleaner.clean
   end
   config.include WebMock::API

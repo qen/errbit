@@ -36,7 +36,7 @@ module Errbit
 
     # > rails generate - config
     config.generators do |g|
-      g.orm             :mongoid
+      g.orm             :active_record
       g.template_engine :haml
       g.test_framework  :rspec, :fixture => false
       g.fixture_replacement :fabrication

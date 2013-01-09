@@ -63,13 +63,6 @@ gem 'httparty'
 # GitHub OAuth
 gem 'omniauth-github'
 
-
-platform :ruby do
-#  gem 'mongo', '= 1.6.2'
-  gem 'bson', '= 1.6.2'
-  gem 'bson_ext', '= 1.6.2'
-end
-
 gem 'ri_cal'
 gem 'yajl-ruby', :require => "yajl"
 

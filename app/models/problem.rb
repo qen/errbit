@@ -4,48 +4,61 @@
 
 class Problem < ActiveRecord::Base
 
-  field :last_notice_at, :type => DateTime, :default => Proc.new { Time.now }
-  field :first_notice_at, :type => DateTime, :default => Proc.new { Time.now }
-  field :last_deploy_at, :type => Time
-  field :resolved, :type => Boolean, :default => false
-  field :resolved_at, :type => Time
-  field :issue_link, :type => String
-  field :issue_type, :type => String
+#  field :last_notice_at, :type => DateTime, :default => Proc.new { Time.now }
+#  field :first_notice_at, :type => DateTime, :default => Proc.new { Time.now }
+#  field :last_deploy_at, :type => Time
+#  field :resolved, :type => Boolean, :default => false
+#  field :resolved_at, :type => Time
+#  field :issue_link, :type => String
+#  field :issue_type, :type => String
+#
+#  # Cached fields
+#  field :app_name, :type => String
+#  field :notices_count, :type => Integer, :default => 0
+#  field :message
+#  field :environment
+#  field :error_class
+#  field :where
+#  field :user_agents, :type => Hash, :default => {}
+#  field :messages,    :type => Hash, :default => {}
+#  field :hosts,       :type => Hash, :default => {}
+#  field :comments_count, :type => Integer, :default => 0
+#
+#  index :app_id
+#  index :app_name
+#  index :message
+#  index :last_notice_at
+#  index :first_notice_at
+#  index :last_deploy_at
+#  index :resolved_at
+#  index :notices_count
 
-  # Cached fields
-  field :app_name, :type => String
-  field :notices_count, :type => Integer, :default => 0
-  field :message
-  field :environment
-  field :error_class
-  field :where
-  field :user_agents, :type => Hash, :default => {}
-  field :messages,    :type => Hash, :default => {}
-  field :hosts,       :type => Hash, :default => {}
-  field :comments_count, :type => Integer, :default => 0
-
-  index :app_id
-  index :app_name
-  index :message
-  index :last_notice_at
-  index :first_notice_at
-  index :last_deploy_at
-  index :resolved_at
-  index :notices_count
-
-  belongs_to :app
+  belongs_to :app, inverse_id: :problems
   has_many :errs, :inverse_of => :problem, :dependent => :destroy
   has_many :comments, :inverse_of => :err, :dependent => :destroy
 
   before_create :cache_app_attributes
+  after_initialize :default_values
 
   scope :resolved, where(:resolved => true)
   scope :unresolved, where(:resolved => false)
-  scope :ordered, order_by(:last_notice_at.desc)
+  scope :ordered, order_by([:last_notice_at, :desc])
   scope :for_apps, lambda {|apps| where(:app_id.in => apps.all.map(&:id))}
 
   validates_presence_of :last_notice_at, :first_notice_at
 
+  def default_values
+    if self.new_record?
+      self.user_agents ||= {}
+      self.messages ||= {}
+      self.hosts ||= {}
+      self.comments_count = 0
+      self.notices_count = 0
+      self.resolved = false
+      self.first_notice_at = Time.new
+      self.last_notice_at = Time.new
+    end
+  end
 
   def self.in_env(env)
     env.present? ? where(:environment => env) : scoped

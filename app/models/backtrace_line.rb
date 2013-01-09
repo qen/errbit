@@ -2,11 +2,12 @@ class BacktraceLine < ActiveRecord::Base
   IN_APP_PATH = %r{^\[PROJECT_ROOT\](?!(\/vendor))/?}
   GEMS_PATH   = %r{\[GEM_ROOT\]\/gems\/([^\/]+)}
 
-  field :number, :type => Integer
-  field :file
-  field :method
+#  field :number, :type => Integer
+#  field :file
+#  field :method
 
-  embedded_in :backtrace
+#  embedded_in :backtrace
+  belongs_to :backtrace
 
   scope :in_app, where(:file => IN_APP_PATH)
 

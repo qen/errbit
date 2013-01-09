@@ -1,0 +1,36 @@
+class CreateProblems < ActiveRecord::Migration
+  def change
+    create_table :problems do |t|
+      t.integer :app_id
+
+      t.datetime :last_notice_at
+      t.datetime :first_notice_at
+      t.time :last_deploy_at
+      t.boolean :resolved
+      t.time :resolved_at
+      t.string :issue_link
+      t.string :issue_type
+
+      t.string :app_name
+      t.integer :notices_count
+      t.string :message
+      t.string :environment
+      t.string :error_class
+      t.string :where
+      t.text :user_agents
+      t.text :messages
+      t.text :hosts
+      t.text :comments_count
+
+      t.timestamps
+    end
+
+    add_index :problems, :app_id
+    add_index :problems, :app_name
+    add_index :problems, :message
+    add_index :problems, :last_notice_at
+    add_index :problems, :first_notice_at
+    add_index :problems, :resolved_at
+    add_index :problems, :notices_count
+  end
+end

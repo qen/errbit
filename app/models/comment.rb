@@ -3,8 +3,8 @@ class Comment < ActiveRecord::Base
   after_create :increase_counter_cache
   before_destroy :decrease_counter_cache
 
-  field :body, :type => String
-  index :user_id
+  # field :body, :type => String
+  # index :user_id
 
   belongs_to :err, :class_name => "Problem"
   belongs_to :user

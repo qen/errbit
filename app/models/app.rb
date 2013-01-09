@@ -1,30 +1,40 @@
 class App < ActiveRecord::Base
   include Comparable
 
-  field :name, :type => String
-  field :api_key
-  field :github_repo
-  field :bitbucket_repo
-  field :repository_branch
-  field :resolve_errs_on_deploy, :type => Boolean, :default => false
-  field :notify_all_users, :type => Boolean, :default => false
-  field :notify_on_errs, :type => Boolean, :default => true
-  field :notify_on_deploys, :type => Boolean, :default => false
-  field :email_at_notices, :type => Array, :default => Errbit::Config.email_at_notices
+  serialize :email_at_notices, class: Array
+
+  has_many :watchers, inverse_of: :app
+  has_many :deploys, inverse_of: :app
+
+  has_one :issue_tracker, inverse_of: :app
+  has_one :notification_service, inverse_of: :app
+
+
+#  field :name, :type => String
+#  field :api_key
+#  field :github_repo
+#  field :bitbucket_repo
+#  field :repository_branch
+#  field :resolve_errs_on_deploy, :type => Boolean, :default => false
+#  field :notify_all_users, :type => Boolean, :default => false
+#  field :notify_on_errs, :type => Boolean, :default => true
+#  field :notify_on_deploys, :type => Boolean, :default => false
+#  field :email_at_notices, :type => Array, :default => Errbit::Config.email_at_notices
 
   # Some legacy apps may have string as key instead of BSON::ObjectID
-  identity :type => String
+#  identity :type => String
 
-  embeds_many :watchers
-  embeds_many :deploys
-  embeds_one :issue_tracker
-  embeds_one :notification_service
+#  embeds_many :watchers
+#  embeds_many :deploys
+#  embeds_one :issue_tracker
+#  embeds_one :notification_service
 
   has_many :problems, :inverse_of => :app, :dependent => :destroy
 
   before_validation :generate_api_key, :on => :create
   before_save :normalize_github_repo
   after_update :store_cached_attributes_on_problems
+  after_initialize :default_values
 
   validates_presence_of :name, :api_key
   validates_uniqueness_of :name, :allow_blank => true
@@ -38,6 +48,14 @@ class App < ActiveRecord::Base
     :reject_if => proc { |attrs| !IssueTracker.subclasses.map(&:to_s).include?(attrs[:type].to_s) }
   accepts_nested_attributes_for :notification_service, :allow_destroy => true,
     :reject_if => proc { |attrs| !NotificationService.subclasses.map(&:to_s).include?(attrs[:type].to_s) }
+
+
+  # Set default values for new record
+  def default_values
+    if self.new_record?
+      self.email_at_notices ||= Errbit::Config.email_at_notices
+    end
+  end
 
   # Processes a new error report.
   #

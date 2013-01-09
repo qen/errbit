@@ -4,16 +4,16 @@ class IssueTracker < ActiveRecord::Base
   include Rails.application.routes.url_helpers
   default_url_options[:host] = ActionMailer::Base.default_url_options[:host]
 
-  embedded_in :app, :inverse_of => :issue_tracker
-
-  field :project_id, :type => String
-  field :alt_project_id, :type => String # Specify an alternative project id. e.g. for viewing files
-  field :api_token, :type => String
-  field :account, :type => String
-  field :username, :type => String
-  field :password, :type => String
-  field :ticket_properties, :type => String
-  field :subdomain, :type => String
+#  embedded_in :app, :inverse_of => :issue_tracker
+  belongs_to :app, inverse_of: :issue_tracker
+#  field :project_id, :type => String
+#  field :alt_project_id, :type => String # Specify an alternative project id. e.g. for viewing files
+#  field :api_token, :type => String
+#  field :account, :type => String
+#  field :username, :type => String
+#  field :password, :type => String
+#  field :ticket_properties, :type => String
+#  field :subdomain, :type => String
 
   validate :check_params
 

@@ -1,12 +1,13 @@
 class Backtrace < ActiveRecord::Base
 
-  field :fingerprint
-  index :fingerprint
+#  field :fingerprint
+#  index :fingerprint
 
   has_many :notices
   has_one :notice
 
-  embeds_many :lines, :class_name => "BacktraceLine"
+#  embeds_many :lines, :class_name => "BacktraceLine"
+  has_many :lines, class_name: 'BacktraceLine'
 
   after_initialize :generate_fingerprint
 

@@ -1,18 +1,26 @@
 class User < ActiveRecord::Base
+  # Include default devise modules. Others available are:
+  # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
+  #devise :database_authenticatable, :registerable,
+  #       :recoverable, :rememberable, :trackable, :validatable
+
+  # Setup accessible (or protected) attributes for your model
+  attr_accessible :email, :password, :password_confirmation, :remember_me
   PER_PAGE = 30
 
   devise *Errbit::Config.devise_modules
 
-  field :email
-  field :github_login
-  field :github_oauth_token
-  field :name
-  field :admin, :type => Boolean, :default => false
-  field :per_page, :type => Fixnum, :default => PER_PAGE
-  field :time_zone, :default => "UTC"
+#  field :email
+#  field :github_login
+#  field :github_oauth_token
+#  field :name
+#  field :admin, :type => Boolean, :default => false
+#  field :per_page, :type => Fixnum, :default => PER_PAGE
+#  field :time_zone, :default => "UTC"
 
   after_destroy :destroy_watchers
   before_save :ensure_authentication_token
+  after_initialize :default_values
 
   validates_presence_of :name
   validates_uniqueness_of :github_login, :allow_nil => true
@@ -22,8 +30,16 @@ class User < ActiveRecord::Base
   has_many :apps, :foreign_key => 'watchers.user_id'
 
   if Errbit::Config.user_has_username
-    field :username
+    # field :username
     validates_presence_of :username
+  end
+
+  def default_values
+    if self.new_record?
+      self.admin ||= false
+      self.per_page ||= PER_PAGE
+      self.time_zone ||= "UTC"
+    end
   end
 
   def watchers

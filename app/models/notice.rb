@@ -3,27 +3,34 @@ require 'recurse'
 
 class Notice < ActiveRecord::Base
 
-  field :message
-  field :server_environment, :type => Hash
-  field :request, :type => Hash
-  field :notifier, :type => Hash
-  field :user_attributes, :type => Hash
-  field :current_user, :type => Hash
-  field :framework
-  field :error_class
+#  field :message
+#  field :server_environment, :type => Hash
+#  field :request, :type => Hash
+#  field :notifier, :type => Hash
+#  field :user_attributes, :type => Hash
+#  field :current_user, :type => Hash
+#  field :framework
+#  field :error_class
+
+  serialize :server_environment, class: Hash
+  serialize :request, class: Hash
+  serialize :notifier, class: Hash
+  serialize :user_attributes, class: Hash
+  serialize :current_user, class: Hash
+
   delegate :lines, :to => :backtrace, :prefix => true
   delegate :app, :problem, :to => :err
 
   belongs_to :err
-  belongs_to :backtrace, :index => true
-  index :created_at
-  index(
-    [
-      [ :err_id, Mongo::ASCENDING ],
-      [ :created_at, Mongo::ASCENDING ],
-      [ :_id, Mongo::ASCENDING ]
-    ]
-  )
+  belongs_to :backtrace #, :index => true
+#  index :created_at
+#  index(
+#    [
+#      [ :err_id, Mongo::ASCENDING ],
+#      [ :created_at, Mongo::ASCENDING ],
+#      [ :_id, Mongo::ASCENDING ]
+#    ]
+#  )
 
   after_create :increase_counter_cache, :cache_attributes_on_problem, :unresolve_problem
   before_save :sanitize
@@ -31,8 +38,8 @@ class Notice < ActiveRecord::Base
 
   validates_presence_of :backtrace, :server_environment, :notifier
 
-  scope :ordered, order_by(:created_at.asc)
-  scope :reverse_ordered, order_by(:created_at.desc)
+  scope :ordered, order_by('created_at asc')
+  scope :reverse_ordered, order_by('created_at desc')
   scope :for_errs, lambda {|errs| where(:err_id.in => errs.all.map(&:id))}
 
   def user_agent

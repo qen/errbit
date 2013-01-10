@@ -7,7 +7,7 @@ namespace :errbit do
     configs = {
       'config.example.yml'  => 'config.yml',
       'deploy.example.rb'   => 'deploy.rb',
-      'database.example.yml'   => 'database.example.yml',
+      'database.example.yml'   => 'database.yml',
     }
 
     puts "Copying example config files..."

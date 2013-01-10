@@ -1,7 +1,7 @@
 class App < ActiveRecord::Base
   include Comparable
 
-  serialize :email_at_notices, class: Array
+  serialize :email_at_notices, Array
 
   has_many :watchers, inverse_of: :app
   has_many :deploys, inverse_of: :app
@@ -176,9 +176,9 @@ class App < ActiveRecord::Base
 
   # Copy app attributes from another app.
   def copy_attributes_from(app_id)
-    if copy_app = App.where(:_id => app_id).first
+    if copy_app = App.find(app_id)
       # Copy fields
-      (copy_app.fields.keys - %w(_id name created_at updated_at)).each do |k|
+      (copy_app.fields.keys - %w(id name created_at updated_at)).each do |k|
         self.send("#{k}=", copy_app.send(k))
       end
       # Clone the embedded objects that can be changed via apps/edit (ignore errs & deploys, etc.)

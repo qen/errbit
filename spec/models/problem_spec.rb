@@ -130,7 +130,7 @@ describe Problem do
       problem.should_not be_valid
       lambda {
         problem.resolve!
-      }.should raise_error(Mongoid::Errors::Validations)
+      }.should raise_error(ActiveRecord::RecordInvalid)
     end
   end
 

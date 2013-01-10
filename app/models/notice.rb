@@ -12,11 +12,11 @@ class Notice < ActiveRecord::Base
 #  field :framework
 #  field :error_class
 
-  serialize :server_environment, class: Hash
-  serialize :request, class: Hash
-  serialize :notifier, class: Hash
-  serialize :user_attributes, class: Hash
-  serialize :current_user, class: Hash
+  serialize :server_environment, Hash
+  serialize :request, Hash
+  serialize :notifier, Hash
+  serialize :user_attributes, Hash
+  serialize :current_user, Hash
 
   delegate :lines, :to => :backtrace, :prefix => true
   delegate :app, :problem, :to => :err
@@ -35,12 +35,23 @@ class Notice < ActiveRecord::Base
   after_create :increase_counter_cache, :cache_attributes_on_problem, :unresolve_problem
   before_save :sanitize
   before_destroy :decrease_counter_cache, :remove_cached_attributes_from_problem
+  after_initialize :default_values
 
   validates_presence_of :backtrace, :server_environment, :notifier
 
   scope :ordered, order('created_at asc')
   scope :reverse_ordered, order('created_at desc')
-  scope :for_errs, lambda {|errs| where(:err_id.in => errs.all.map(&:id))}
+  scope :for_errs, lambda {|errs| where(:err_id => errs.all.map(&:id))}
+
+  def default_values
+    if self.new_record?
+      self.server_environment ||= Hash.new
+      self.request ||= Hash.new
+      self.notifier ||= Hash.new
+      self.user_attributes ||= Hash.new
+      self.current_user ||= Hash.new
+    end
+  end
 
   def user_agent
     agent_string = env_vars['HTTP_USER_AGENT']

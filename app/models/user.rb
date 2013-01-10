@@ -27,7 +27,8 @@ class User < ActiveRecord::Base
 
   attr_protected :admin
 
-  has_many :apps, :foreign_key => 'watchers.user_id'
+  has_many :apps, through: :watchers
+  has_many :watchers
 
   if Errbit::Config.user_has_username
     # field :username

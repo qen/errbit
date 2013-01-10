@@ -138,19 +138,21 @@ class Problem < ActiveRecord::Base
 
   def cache_app_attributes
     if app
-      self.app_name = app.name
       self.last_deploy_at = if (last_deploy = app.deploys.where(:environment => self.environment).last)
         last_deploy.created_at.utc
       end
-      collection.update({'_id' => self.id},
-                        {'$set' => {'app_name' => self.app_name,
-                          'last_deploy_at' => self.last_deploy_at.try(:utc)}})
+      self.app_name = app.name
+
+      Problem.where(id: self).update_all(
+        last_deploy_at: self.last_deploy_at,
+        app_name: self.app_name
+      )
     end
   end
 
   def cache_notice_attributes(notice=nil)
-    first_notice = notices.order_by([:created_at, :asc]).first
-    last_notice = notices.order_by([:created_at, :asc]).last
+    first_notice = notices.order("created_at asc").first
+    last_notice = notices.order("created_at asc").last
     notice ||= first_notice
 
     attrs = {}
@@ -180,6 +182,10 @@ class Problem < ActiveRecord::Base
     # Return issue_type if configured, but fall back to detecting app's issue tracker
     attributes['issue_type'] ||=
     (app.issue_tracker_configured? && app.issue_tracker.label) || nil
+  end
+
+  def inc(attr, increment_by)
+    self.update_attribute(attr, self.send(attr) + increment_by)
   end
 
   private

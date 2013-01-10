@@ -13,7 +13,7 @@ class Comment < ActiveRecord::Base
 
   protected
     def increase_counter_cache
-      err.inc(:comments_count, 1)
+      err.inc(:comments_count, 1) if err
     end
 
     def decrease_counter_cache

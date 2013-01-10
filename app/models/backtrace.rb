@@ -1,5 +1,6 @@
 class Backtrace < ActiveRecord::Base
 
+  attr_accessor :fingerprint
 #  field :fingerprint
 #  index :fingerprint
 

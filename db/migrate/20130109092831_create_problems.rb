@@ -5,9 +5,9 @@ class CreateProblems < ActiveRecord::Migration
 
       t.datetime :last_notice_at
       t.datetime :first_notice_at
-      t.time :last_deploy_at
+      t.date :last_deploy_at
       t.boolean :resolved
-      t.time :resolved_at
+      t.date :resolved_at
       t.string :issue_link
       t.string :issue_type
 

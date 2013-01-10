@@ -178,7 +178,7 @@ class App < ActiveRecord::Base
   def copy_attributes_from(app_id)
     if copy_app = App.find(app_id)
       # Copy fields
-      (copy_app.fields.keys - %w(id name created_at updated_at)).each do |k|
+      (copy_app.attribute_names - %w(id name created_at updated_at)).each do |k|
         self.send("#{k}=", copy_app.send(k))
       end
       # Clone the embedded objects that can be changed via apps/edit (ignore errs & deploys, etc.)

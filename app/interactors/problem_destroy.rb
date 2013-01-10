@@ -37,12 +37,12 @@ class ProblemDestroy
   end
 
   def delete_errs
-    Err.collection.remove(:_id => { '$in' => errs_id })
-    Notice.collection.remove(:err_id => { '$in' => errs_id })
+    Err.destroy_all(id: errs_id)
+    Notice.destroy_all(err_id: errs_id)
   end
 
   def delete_comments
-    Comment.collection.remove(:_id => { '$in' => comments_id })
+    Comment.destroy_all(id: comments_id)
   end
 
 end

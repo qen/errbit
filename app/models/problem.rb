@@ -33,6 +33,10 @@ class Problem < ActiveRecord::Base
 #  index :resolved_at
 #  index :notices_count
 
+  serialize :messages, Hash
+  serialize :user_agents, Hash
+  serialize :hosts, Hash
+
   belongs_to :app, inverse_of: :problems
   has_many :errs, :inverse_of => :problem, :dependent => :destroy
   has_many :comments, :inverse_of => :err, :dependent => :destroy
@@ -49,9 +53,9 @@ class Problem < ActiveRecord::Base
 
   def default_values
     if self.new_record?
-      self.user_agents ||= {}
-      self.messages ||= {}
-      self.hosts ||= {}
+      self.user_agents ||= Hash.new
+      self.messages ||= Hash.new
+      self.hosts ||= Hash.new
       self.comments_count = 0
       self.notices_count = 0
       self.resolved = false
@@ -116,17 +120,17 @@ class Problem < ActiveRecord::Base
 
   def self.ordered_by(sort, order)
     case sort
-    when "app";            order_by(["app_name", order])
-    when "message";        order_by(["message", order])
-    when "last_notice_at"; order_by(["last_notice_at", order])
-    when "last_deploy_at"; order_by(["last_deploy_at", order])
-    when "count";          order_by(["notices_count", order])
+    when "app";            order("app_name #{order}")
+    when "message";        order("message #{order}")
+    when "last_notice_at"; order("last_notice_at #{order}")
+    when "last_deploy_at"; order("last_deploy_at #{order}")
+    when "count";          order("notices_count #{order}")
     else raise("\"#{sort}\" is not a recognized sort")
     end
   end
 
   def self.in_date_range(date_range)
-    where(:first_notice_at.lte => date_range.end).where("$or" => [{:resolved_at => nil}, {:resolved_at.gte => date_range.begin}])
+    where(["first_notice_at <= ? AND (resolved_at IS NULL OR resolved_at >= ?)", date_range.end, date_range.begin])
   end
 
 

@@ -23,10 +23,8 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
   config.alias_example_to :fit, :focused => true
 
-  config.before(:each) do
-    DatabaseCleaner[:active_record].strategy = :truncation
-    DatabaseCleaner.clean
-  end
+  DatabaseCleaner[:active_record].strategy = :truncation
+  DatabaseCleaner.clean
   config.include WebMock::API
 end
 

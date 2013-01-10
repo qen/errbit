@@ -11,6 +11,7 @@ config/newrelic.yml
 config/database.yml
 coverage/*
 .rvmrc
+*.sw[a-z]
 .idea
 *~
 *.rbc

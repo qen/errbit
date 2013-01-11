@@ -8,7 +8,7 @@ class Backtrace < ActiveRecord::Base
   has_one :notice
 
 #  embeds_many :lines, :class_name => "BacktraceLine"
-  has_many :lines, class_name: 'BacktraceLine'
+  has_many :lines, class_name: 'BacktraceLine', :order => "created_at ASC"
 
   after_initialize :generate_fingerprint
 

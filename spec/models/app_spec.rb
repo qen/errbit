@@ -12,14 +12,14 @@ describe App do
       Fabricate(:app, :name => 'Errbit')
       app = Fabricate.build(:app, :name => 'Errbit')
       app.should_not be_valid
-      app.errors[:name].should include('is already taken')
+      app.errors[:name].should include('has already been taken')
     end
 
     it 'requires unique api_keys' do
       Fabricate(:app, :api_key => 'APIKEY')
       app = Fabricate.build(:app, :api_key => 'APIKEY')
       app.should_not be_valid
-      app.errors[:api_key].should include('is already taken')
+      app.errors[:api_key].should include('has already been taken')
     end
   end
 
@@ -117,6 +117,7 @@ describe App do
       @app = Fabricate(:app)
       3.times { Fabricate(:user) }
       5.times { Fabricate(:watcher, :app => @app) }
+      @app.reload
       @app.notify_all_users = true
       @app.notification_recipients.size.should == 8
       @app.notify_all_users = false
@@ -205,6 +206,7 @@ describe App do
       err.should be_resolved
       @notice = App.report_error!(@xml)
       @notice.err.should == err
+      @notice.reload
       @notice.err.should_not be_resolved
     end
 

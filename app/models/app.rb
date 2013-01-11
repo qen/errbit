@@ -159,7 +159,7 @@ class App < ActiveRecord::Base
 
   def notification_recipients
     if notify_all_users
-      (User.all.map(&:email).reject(&:blank?) + watchers.map(&:address)).uniq
+      (User.with_not_blank_email.map(&:email) + watchers.map(&:address)).uniq
     else
       watchers.map(&:address)
     end

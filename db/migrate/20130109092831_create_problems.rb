@@ -13,6 +13,7 @@ class CreateProblems < ActiveRecord::Migration
 
       t.string :app_name
       t.integer :notices_count
+      t.integer :comments_count
       t.string :message
       t.string :environment
       t.string :error_class
@@ -20,7 +21,6 @@ class CreateProblems < ActiveRecord::Migration
       t.text :user_agents
       t.text :messages
       t.text :hosts
-      t.text :comments_count
 
       t.timestamps
     end
@@ -32,5 +32,6 @@ class CreateProblems < ActiveRecord::Migration
     add_index :problems, :first_notice_at
     add_index :problems, :resolved_at
     add_index :problems, :notices_count
+    add_index :problems, :comments_count
   end
 end

@@ -27,7 +27,7 @@ describe User do
       user2 = Fabricate.build(:user, :github_login => 'nashby')
       user2.save
       user2.should_not be_valid
-      user2.errors[:github_login].should include("is already taken")
+      user2.errors[:github_login].should include("has already been taken")
     end
   end
 

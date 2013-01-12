@@ -6,7 +6,7 @@ class Comment < ActiveRecord::Base
   # field :body, :type => String
   # index :user_id
 
-  belongs_to :err, :class_name => "Problem"
+  belongs_to :err, :class_name => "Problem", :foreign_key => "problem_id"
   belongs_to :user
 
   validates_presence_of :body

@@ -62,15 +62,15 @@ describe ProblemDestroy do
 
     it 'should all destroy' do
       problem_destroy.execute
-      Problem.where(:_id => problem.id).entries.should be_empty
-      Err.where(:_id => err_1.id).entries.should be_empty
-      Err.where(:_id => err_2.id).entries.should be_empty
-      Comment.where(:_id => comment_1.id).entries.should be_empty
-      Comment.where(:_id => comment_2.id).entries.should be_empty
-      Notice.where(:_id => notice_1_1.id).entries.should be_empty
-      Notice.where(:_id => notice_1_2.id).entries.should be_empty
-      Notice.where(:_id => notice_2_1.id).entries.should be_empty
-      Notice.where(:_id => notice_2_2.id).entries.should be_empty
+      Problem.where(:id => problem.id).entries.should be_empty
+      Err.where(:id => err_1.id).entries.should be_empty
+      Err.where(:id => err_2.id).entries.should be_empty
+      Comment.where(:id => comment_1.id).entries.should be_empty
+      Comment.where(:id => comment_2.id).entries.should be_empty
+      Notice.where(:id => notice_1_1.id).entries.should be_empty
+      Notice.where(:id => notice_1_2.id).entries.should be_empty
+      Notice.where(:id => notice_2_1.id).entries.should be_empty
+      Notice.where(:id => notice_2_2.id).entries.should be_empty
     end
   end
 

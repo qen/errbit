@@ -9,6 +9,7 @@ class CreateNotificationServices < ActiveRecord::Migration
       t.string :api_token
       t.string :subdomain
       t.string :sender_name
+      t.string :type
 
       t.timestamps
     end

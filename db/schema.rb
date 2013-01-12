@@ -126,6 +126,7 @@ ActiveRecord::Schema.define(:version => 20130109095218) do
     t.string   "api_token"
     t.string   "subdomain"
     t.string   "sender_name"
+    t.string   "type"
     t.datetime "created_at",  :null => false
     t.datetime "updated_at",  :null => false
   end

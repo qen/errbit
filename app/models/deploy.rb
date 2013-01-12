@@ -16,6 +16,8 @@ class Deploy < ActiveRecord::Base
 
   validates_presence_of :username, :environment
 
+  scope :by_created_at, order("created_at DESC")
+
   def resolve_app_errs
     app.problems.unresolved.in_env(environment).each {|problem| problem.resolve!}
   end

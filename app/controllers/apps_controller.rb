@@ -18,7 +18,7 @@ class AppsController < InheritedResources::Base
         @problems = @problems.in_env(params[:environment]).ordered_by(@sort, @order).page(params[:page]).per(current_user.per_page)
 
         @selected_problems = params[:problems] || []
-        @deploys = @app.deploys.order_by(:created_at.desc).limit(5)
+        @deploys = @app.deploys.by_created_at.limit(5)
       end
       format.atom do
         @problems = resource.problems.unresolved.ordered
@@ -59,7 +59,8 @@ class AppsController < InheritedResources::Base
       # set the app's issue tracker
       if params[:app][:issue_tracker_attributes] && tracker_type = params[:app][:issue_tracker_attributes][:type]
         if IssueTracker.subclasses.map(&:name).concat(["IssueTracker"]).include?(tracker_type)
-          @app.issue_tracker = tracker_type.constantize.new(params[:app][:issue_tracker_attributes])
+          @app.build_issue_tracker(params[:app].delete(:issue_tracker_attributes))
+          @app.issue_tracker.type = tracker_type
         end
       end
     end

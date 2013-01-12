@@ -157,7 +157,7 @@ describe AppsController do
         app = Fabricate(:app)
         lambda {
           get :show, :id => app.id
-        }.should raise_error(Mongoid::Errors::DocumentNotFound)
+        }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -326,7 +326,6 @@ describe AppsController do
     describe "DELETE /apps/:id" do
       before do
         @app = Fabricate(:app)
-        App.stub(:find).with(@app.id).and_return(@app)
       end
 
       it "should find the app" do
@@ -335,8 +334,10 @@ describe AppsController do
       end
 
       it "should destroy the app" do
-        @app.should_receive(:destroy)
         delete :destroy, :id => @app.id
+        lambda {
+          @app.reload
+        }.should raise_error(ActiveRecord::RecordNotFound)
       end
 
       it "should display a message" do

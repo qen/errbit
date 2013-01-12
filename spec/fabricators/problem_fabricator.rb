@@ -1,6 +1,5 @@
 Fabricator(:problem) do
   app! { Fabricate(:app) }
-  comments { [] }
 end
 
 Fabricator(:problem_with_comments, :from => :problem) do

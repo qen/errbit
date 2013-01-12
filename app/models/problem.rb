@@ -47,7 +47,7 @@ class Problem < ActiveRecord::Base
   scope :resolved, where(:resolved => true)
   scope :unresolved, where(:resolved => false)
   scope :ordered, order("last_notice_at desc")
-  scope :for_apps, lambda {|apps| where(:app_id.in => apps.all.map(&:id))}
+  scope :for_apps, lambda {|apps| where(:app_id => apps.map(&:id))}
 
   validates_presence_of :last_notice_at, :first_notice_at
 
@@ -69,7 +69,7 @@ class Problem < ActiveRecord::Base
   end
 
   def notices
-    Notice.for_errs(errs).ordered
+    Notice.for_errs(errs)
   end
 
   def comments_allowed?

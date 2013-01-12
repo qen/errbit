@@ -223,7 +223,7 @@ describe ProblemsController do
       it 'raises a DocumentNotFound error if the user is not watching the app' do
         lambda {
           get :show, :app_id => @unwatched_err.problem.app_id, :id => @unwatched_err.problem.id
-        }.should raise_error(Mongoid::Errors::DocumentNotFound)
+        }.should raise_error(ActiveRecord::RecordNotFound)
       end
     end
   end
@@ -232,38 +232,35 @@ describe ProblemsController do
     before do
       sign_in Fabricate(:admin)
 
-      @problem = Fabricate(:err)
-      App.stub(:find).with(@problem.app.id).and_return(@problem.app)
-      @problem.app.problems.stub(:find).and_return(@problem.problem)
-      @problem.problem.stub(:resolve!)
+      @problem = Fabricate(:problem, :resolved => false)
+      @err = Fabricate(:err, :problem => @problem)
     end
 
     it 'finds the app and the problem' do
-      App.should_receive(:find).with(@problem.app.id).and_return(@problem.app)
-      @problem.app.problems.should_receive(:find).and_return(@problem.problem)
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
-      assigns(:app).should == @problem.app
-      assigns(:problem).should == @problem.problem
+      put :resolve, :app_id => @err.app.id, :id => @err.problem.id
+      assigns(:app).should == @err.app
+      assigns(:problem).should == @err.problem
     end
 
     it "should resolve the issue" do
-      @problem.problem.should_receive(:resolve!).and_return(true)
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      put :resolve, :app_id => @err.app.id, :id => @err.problem.id
+      @err.reload
+      @err.problem.should be_resolved
     end
 
     it "should display a message" do
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      put :resolve, :app_id => @err.app.id, :id => @err.problem.id
       request.flash[:success].should match(/Great news/)
     end
 
     it "should redirect to the app page" do
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
-      response.should redirect_to(app_path(@problem.app))
+      put :resolve, :app_id => @err.app.id, :id => @err.problem.id
+      response.should redirect_to(app_path(@err.app))
     end
 
     it "should redirect back to problems page" do
       request.env["Referer"] = problems_path
-      put :resolve, :app_id => @problem.app.id, :id => @problem.problem.id
+      put :resolve, :app_id => @err.app.id, :id => @err.problem.id
       response.should redirect_to(problems_path)
     end
   end

@@ -93,11 +93,7 @@ class ProblemsController < ApplicationController
 
   protected
     def find_app
-      @app = App.find(params[:app_id])
-
-      # Mongoid Bug: could not chain: current_user.apps.find_by_id!
-      # apparently finding by 'watchers.email' and 'id' is broken
-      raise(Mongoid::Errors::DocumentNotFound.new(App,@app.id)) unless current_user.admin? || current_user.watching?(@app)
+      @app = current_user.admin? ? App.find(params[:app_id]) : current_user.apps.find(params[:app_id])
     end
 
     def find_problem

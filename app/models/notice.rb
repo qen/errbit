@@ -42,6 +42,7 @@ class Notice < ActiveRecord::Base
   scope :ordered, order('created_at asc')
   scope :reverse_ordered, order('created_at desc')
   scope :for_errs, lambda {|errs| where(:err_id => errs.all.map(&:id))}
+  scope :created_between, lambda {|start_date, end_date| where("created_at BETWEEN :start_date and :end_date", start_date: start_date, end_date: end_date)}
 
   def default_values
     if self.new_record?

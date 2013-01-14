@@ -13,7 +13,8 @@ describe "problems/show.html.haml" do
   end
 
   def with_issue_tracker(tracker, problem)
-    problem.app.issue_tracker = tracker.new :api_token => "token token token", :project_id => "1234"
+    # problem with has_one and sti, cause reverse creating
+    tracker.create :api_token => "token token token", :project_id => "1234", :app => problem.app
     assign :problem, problem
     assign :app, problem.app
   end

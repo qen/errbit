@@ -102,7 +102,7 @@ describe Problem do
 
     it "should record the time when it was resolved" do
       problem = Fabricate(:problem)
-      expected_resolved_at = Time.now
+      expected_resolved_at = Time.current
       Timecop.freeze(expected_resolved_at) do
         problem.resolve!
       end

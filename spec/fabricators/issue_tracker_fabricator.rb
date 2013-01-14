@@ -1,10 +1,10 @@
 Fabricator :issue_tracker do
   app!
-  api_token { sequence :word }
-  project_id { sequence :word }
-  account { sequence :word }
-  username { sequence :word }
-  password { sequence :word }
+  api_token { Fabricate.sequence :word }
+  project_id { Fabricate.sequence :word }
+  account { Fabricate.sequence :word }
+  username { Fabricate.sequence :word }
+  password { Fabricate.sequence :word }
 end
 
 %w(lighthouse pivotal_labs fogbugz).each do |t|

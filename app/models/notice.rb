@@ -109,7 +109,7 @@ class Notice < ActiveRecord::Base
   end
 
   def in_app_backtrace_lines
-    backtrace_lines.in_app
+    backtrace_lines.select(&:in_app?)
   end
 
   def similar_count

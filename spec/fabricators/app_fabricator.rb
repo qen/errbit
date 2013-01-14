@@ -1,5 +1,6 @@
 Fabricator(:app) do
   name { sequence(:app_name){|n| "App ##{n}"} }
+  email_at_notices {[1, 10, 100]}
 end
 
 Fabricator(:app_with_deploys, :from => :app) do

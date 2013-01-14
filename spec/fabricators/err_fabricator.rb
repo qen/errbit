@@ -17,7 +17,7 @@ end
 
 Fabricator :backtrace do
   fingerprint "fingerprint"
-  lines(:count => 99) { Fabricate.build(:backtrace_line) }
+  lines!(:count => 99) { Fabricate.build(:backtrace_line) }
 end
 
 Fabricator :backtrace_line do

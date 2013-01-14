@@ -3,7 +3,7 @@ require 'spec_helper'
 describe IssueTrackers::RedmineTracker do
   it "should create an issue on Redmine with problem params, and set issue link for problem" do
     notice = Fabricate(:notice)
-    tracker = Fabricate(:redmine_tracker, :app => notice.app, :project_id => 10)
+    tracker = Fabricate(:redmine_tracker, :app => notice.app)
     problem = notice.problem
     number = 5
     @issue_link = "#{tracker.account}/issues/#{number}.xml?project_id=#{tracker.project_id}"

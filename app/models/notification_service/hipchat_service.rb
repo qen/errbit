@@ -1,5 +1,5 @@
 if defined? HipChat
-  class NotificationServices::HipchatService < NotificationService
+  class NotificationService::HipchatService < NotificationService
     Label = 'hipchat'
     Fields = [
       [:api_token, {

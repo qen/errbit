@@ -1,4 +1,4 @@
-class NotificationServices::HubotService < NotificationService
+class NotificationService::HubotService < NotificationService
   Label = "hubot"
   Fields = [
     [:api_token, {

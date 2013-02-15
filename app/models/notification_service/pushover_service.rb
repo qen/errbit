@@ -1,4 +1,4 @@
-class NotificationServices::PushoverService < NotificationService
+class NotificationService::PushoverService < NotificationService
   Label = "pushover"
   Fields = [
       [:api_token, {

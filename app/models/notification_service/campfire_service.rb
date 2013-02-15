@@ -1,5 +1,5 @@
 if defined? Campy
-  class NotificationServices::CampfireService < NotificationService
+  class NotificationService::CampfireService < NotificationService
     Label = "campfire"
     Fields = [
       [:subdomain, {

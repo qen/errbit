@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe NotificationServices::HipchatService do
+describe NotificationService::HipchatService do
   let(:service) { Fabricate.build(:hipchat_notification_service) }
   let(:problem) { Fabricate(:problem) }
   let(:room) { double }

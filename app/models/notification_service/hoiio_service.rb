@@ -1,4 +1,4 @@
-class NotificationServices::HoiioService < NotificationService
+class NotificationService::HoiioService < NotificationService
   Label = "hoiio"
   Fields = [
       [:api_token, {

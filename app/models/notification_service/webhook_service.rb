@@ -1,4 +1,4 @@
-class NotificationServices::WebhookService < NotificationService
+class NotificationService::WebhookService < NotificationService
   Label = "webhook"
   Fields = [
     [:api_token, {

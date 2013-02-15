@@ -292,7 +292,7 @@ describe AppsController do
           context tracker_klass do
             it "should save tracker params" do
               params = tracker_klass::Fields.inject({}){|hash,f| hash[f[0]] = "test_value"; hash }
-              params[:ticket_properties] = "card_type = defect" if tracker_klass == MingleTracker
+              params[:ticket_properties] = "card_type = defect" if tracker_klass == IssueTrackers::MingleTracker
               params[:type] = tracker_klass.to_s
               put :update, :id => @app.id, :app => {:issue_tracker_attributes => params}
 

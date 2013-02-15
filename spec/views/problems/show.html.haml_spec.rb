@@ -77,7 +77,7 @@ describe "problems/show.html.haml" do
 
       it 'should allow creating issue for github if application has a github tracker' do
         problem = Fabricate(:problem_with_comments, :app => Fabricate(:app, :github_repo => "test_user/test_repo"))
-        with_issue_tracker(GithubIssuesTracker, problem)
+        with_issue_tracker(IssueTrackers::GithubIssuesTracker, problem)
         assign :problem, problem
         assign :app, problem.app
         render
@@ -107,7 +107,7 @@ describe "problems/show.html.haml" do
     context "with issue tracker" do
       it 'should not display the comments section' do
         problem = Fabricate(:problem)
-        with_issue_tracker(PivotalLabsTracker, problem)
+        with_issue_tracker(IssueTrackers::PivotalLabsTracker, problem)
         render
         view.view_flow.get(:comments).should be_blank
       end
@@ -115,7 +115,7 @@ describe "problems/show.html.haml" do
       it 'should display existing comments' do
         problem = Fabricate(:problem_with_comments)
         problem.reload
-        with_issue_tracker(PivotalLabsTracker, problem)
+        with_issue_tracker(IssueTrackers::PivotalLabsTracker, problem)
         render
 
         view.content_for(:comments).should include('Test comment')

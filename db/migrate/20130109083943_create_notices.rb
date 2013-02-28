@@ -3,7 +3,7 @@ class CreateNotices < ActiveRecord::Migration
     create_table :notices do |t|
       t.integer :err_id
       t.integer :backtrace_id
-      t.string :message
+      t.text :message
       t.text :server_environment
       t.text :request
       t.text :notifier

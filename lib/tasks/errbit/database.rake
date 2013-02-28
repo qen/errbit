@@ -4,7 +4,7 @@ namespace :errbit do
   namespace :db do
 
     desc "Data migrate from mongodb"
-    task :migrate_from_mongo, [:mongoid_config_file] => ["db:reset", "db:migrate"] do |t, args|
+    task :migrate_from_mongo, [:mongoid_config_file] => [:environment] do |t, args|
       raise "you must specified mongoid config file, example: rake 'db:migrate_from_mongo[config/mongoid.yml]'" unless args[:mongoid_config_file]
       config = YAML.load_file(args[:mongoid_config_file])
       migrator = DataMigration.new(config[Rails.env])

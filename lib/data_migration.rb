@@ -25,11 +25,13 @@ class DataMigration
     log "Start copy users, total: #{total}"
 
     @user_mapping = {}
-    db[:users].find.each do |old_user|
-      log "  copying user ##{counter += 1} of #{total} with id #{old_user['_id']}"
+    db[:users].find({}, :timeout => false) do |cursor|
+      cursor.each do |old_user|
+        log "  copying user ##{counter += 1} of #{total} with id #{old_user['_id']}"
 
-      user = copy_user(old_user)
-      @user_mapping[old_user["_id"]] = user.id
+        user = copy_user(old_user)
+        @user_mapping[old_user["_id"]] = user.id
+      end
     end
   end
 
@@ -38,13 +40,15 @@ class DataMigration
     total = db[:apps].count
     log "Start copy apps, total: #{total}"
 
-    db[:apps].find.each do |old_app|
-      log "  copying app ##{counter += 1} of #{total} with id #{old_app['_id']}"
+    db[:apps].find({}, :timeout => false) do |cursor|
+        cursor.each do |old_app|
+        log "  copying app ##{counter += 1} of #{total} with id #{old_app['_id']}"
 
-      app = copy_app(old_app)
-      copy_watchers(old_app, app)
-      copy_deploys(old_app, app)
-      copy_problems(old_app, app)
+        app = copy_app(old_app)
+        copy_watchers(old_app, app)
+        copy_deploys(old_app, app)
+        copy_problems(old_app, app)
+      end
     end
   end
 
@@ -81,12 +85,14 @@ class DataMigration
     total = db[:problems].find("app_id" => old_app["_id"]).count
     log "  Start copy problems, total: #{total}"
 
-    db[:problems].find("app_id" => old_app["_id"]).each do |old_problem|
-      log "    copying problem ##{counter += 1} of #{total} with id #{old_problem['_id']}"
+    db[:problems].find("app_id" => old_app["_id"], :timeout => false) do |cursor|
+      cursor.each do |old_problem|
+        log "    copying problem ##{counter += 1} of #{total} with id #{old_problem['_id']}"
 
-      problem = copy_problem(app, old_problem)
-      copy_comments(problem, old_problem)
-      copy_errs(problem, old_problem)
+        problem = copy_problem(app, old_problem)
+        copy_comments(problem, old_problem)
+        copy_errs(problem, old_problem)
+      end
     end
   end
 
@@ -95,10 +101,12 @@ class DataMigration
     total = db[:comments].find("err_id" => old_problem["_id"]).count
     log "    Start copy comments, total: #{total}"
 
-    db[:comments].find("err_id" => old_problem["_id"]).each do |old_comment|
-      log "      copying comment ##{counter += 1} of #{total} with id #{old_comment['_id']}"
+    db[:comments].find("err_id" => old_problem["_id"], :timeout => false) do |cursor|
+      cursor.each do |old_comment|
+        log "      copying comment ##{counter += 1} of #{total} with id #{old_comment['_id']}"
 
-      copy_comment(problem, old_comment)
+        copy_comment(problem, old_comment)
+      end
     end
   end
 
@@ -107,11 +115,13 @@ class DataMigration
     total = db[:errs].find("problem_id" => old_problem["_id"]).count
     log "    Start copy errs, total: #{total}"
 
-    db[:errs].find("problem_id" => old_problem["_id"]).each do |old_err|
-      log "    copying err ##{counter += 1} of #{total} with id #{old_err['_id']}"
+    db[:errs].find("problem_id" => old_problem["_id"], :timeout => false) do |cursor|
+      cursor.each do |old_err|
+        log "    copying err ##{counter += 1} of #{total} with id #{old_err['_id']}"
 
-      err = copy_err(problem, old_err)
-      copy_notices(err, old_err)
+        err = copy_err(problem, old_err)
+        copy_notices(err, old_err)
+      end
     end
   end
 
@@ -120,10 +130,12 @@ class DataMigration
     total = db[:notices].find("err_id" => old_err["_id"]).count
     log "      Start copy notices, total: #{total}"
 
-    db[:notices].find("err_id" => old_err["_id"]).each do |old_notice|
-      log "        copying notice ##{counter += 1} of #{total} with id #{old_notice['_id']}"
+    db[:notices].find("err_id" => old_err["_id"], :timeout => false) do |cursor|
+      cursor.each do |old_notice|
+        log "        copying notice ##{counter += 1} of #{total} with id #{old_notice['_id']}"
 
-      copy_notice(err, old_notice)
+        copy_notice(err, old_notice)
+      end
     end
   end
 

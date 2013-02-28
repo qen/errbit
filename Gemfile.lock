@@ -50,6 +50,7 @@ GEM
       multi_json (~> 1.3)
       nokogiri (~> 1.5.2)
       simple_oauth
+    bson (1.8.2)
     builder (3.0.4)
     campy (0.1.3)
       multi_json (~> 1.0)
@@ -152,6 +153,8 @@ GEM
       treetop (~> 1.4.8)
     method_source (0.7.1)
     mime-types (1.21)
+    mongo (1.8.2)
+      bson (~> 1.8.2)
     multi_json (1.5.1)
     multi_xml (0.5.2)
     multipart-post (1.1.5)
@@ -345,6 +348,7 @@ DEPENDENCIES
   kaminari (>= 0.14.1)
   launchy
   lighthouse-api
+  mongo
   octokit (~> 1.0.0)
   omniauth-github
   oruen_redmine_client

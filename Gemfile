@@ -21,6 +21,8 @@ gem 'rails_autolink', '~> 1.0.9'
 # It's for internal use only, and we monkeypatch certain methods
 gem 'hoptoad_notifier', "~> 2.4"
 
+# Need for mongodb data import
+gem 'mongo', :require => false
 
 # Remove / comment out any of the gems below if you want to disable
 # a given issue tracker, notification service, or authentication.

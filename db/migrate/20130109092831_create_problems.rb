@@ -14,7 +14,7 @@ class CreateProblems < ActiveRecord::Migration
       t.string :app_name
       t.integer :notices_count
       t.integer :comments_count
-      t.string :message
+      t.text :message
       t.string :environment
       t.string :error_class
       t.string :where

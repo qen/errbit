@@ -94,6 +94,11 @@ class DataMigration
         problem = copy_problem(app, old_problem)
         copy_comments(problem, old_problem)
         copy_errs(problem, old_problem)
+
+        # return resolve flag
+        problem.resolved = old_problem["resolved"]
+        problem.resolved_at = old_problem["resolved_at"]
+        problem.save
       end
     end
   end

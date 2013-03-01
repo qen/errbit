@@ -10,6 +10,7 @@ class DataMigration
     config = config.with_indifferent_access
     config[:host] ||= 'localhost'
     config[:port] ||= 27017
+    @cursor_options = {:timeout => false, :batch_size => 1000, :sort => ["_id", "asc"]}
     @mongo_client = MongoClient.new(config[:host], config[:port])
     @db = @mongo_client[config[:database].to_s]
   end
@@ -27,7 +28,7 @@ class DataMigration
     log "Start copy users, total: #{total}"
 
     @user_mapping = {}
-    db[:users].find({}, :timeout => false) do |cursor|
+    db[:users].find({}, @cursor_options) do |cursor|
       cursor.each do |old_user|
         log "  copying user ##{counter += 1} of #{total} with id #{old_user['_id']}"
 
@@ -42,7 +43,7 @@ class DataMigration
     total = db[:apps].count
     log "Start copy apps, total: #{total}"
 
-    db[:apps].find({}, :timeout => false) do |cursor|
+    db[:apps].find({}, @cursor_options) do |cursor|
       cursor.each do |old_app|
         log "  copying app ##{counter += 1} of #{total} with id #{old_app['_id']}"
 
@@ -87,7 +88,7 @@ class DataMigration
     total = db[:problems].find("app_id" => old_app["_id"]).count
     log "  Start copy problems, total: #{total}"
 
-    db[:problems].find({"app_id" => old_app["_id"]}, :timeout => false) do |cursor|
+    db[:problems].find({"app_id" => old_app["_id"]}, @cursor_options) do |cursor|
       cursor.each do |old_problem|
         log "    copying problem ##{counter += 1} of #{total} with id #{old_problem['_id']}"
 
@@ -108,7 +109,7 @@ class DataMigration
     total = db[:comments].find("err_id" => old_problem["_id"]).count
     log "    Start copy comments, total: #{total}"
 
-    db[:comments].find({"err_id" => old_problem["_id"]}, :timeout => false) do |cursor|
+    db[:comments].find({"err_id" => old_problem["_id"]}, @cursor_options) do |cursor|
       cursor.each do |old_comment|
         log "      copying comment ##{counter += 1} of #{total} with id #{old_comment['_id']}"
 
@@ -122,7 +123,7 @@ class DataMigration
     total = db[:errs].find("problem_id" => old_problem["_id"]).count
     log "    Start copy errs, total: #{total}"
 
-    db[:errs].find({"problem_id" => old_problem["_id"]}, :timeout => false) do |cursor|
+    db[:errs].find({"problem_id" => old_problem["_id"]}, @cursor_options) do |cursor|
       cursor.each do |old_err|
         log "    copying err ##{counter += 1} of #{total} with id #{old_err['_id']}"
 
@@ -137,7 +138,7 @@ class DataMigration
     total = db[:notices].find("err_id" => old_err["_id"]).count
     log "      Start copy notices, total: #{total}"
 
-    db[:notices].find({"err_id" => old_err["_id"]}, :timeout => false) do |cursor|
+    db[:notices].find({"err_id" => old_err["_id"]}, @cursor_options) do |cursor|
       cursor.each do |old_notice|
         log "        copying notice ##{counter += 1} of #{total} with id #{old_notice['_id']}"
 

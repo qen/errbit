@@ -16,7 +16,7 @@ class CreateProblems < ActiveRecord::Migration
       t.integer :comments_count
       t.text :message
       t.string :environment
-      t.string :error_class
+      t.text :error_class
       t.string :where
       t.text :user_agents
       t.text :messages

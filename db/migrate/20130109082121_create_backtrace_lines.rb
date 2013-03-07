@@ -3,8 +3,8 @@ class CreateBacktraceLines < ActiveRecord::Migration
     create_table :backtrace_lines do |t|
       t.integer :backtrace_id
       t.integer :number
-      t.string :file
-      t.string :method
+      t.text :file
+      t.text :method
 
       t.timestamps
     end

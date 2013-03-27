@@ -13,12 +13,21 @@ module DataMigration
 
   class DBPrepareMigration < ActiveRecord::Migration
     def self.up
-      add_column :users, :remote_id, :string
-      add_column :apps, :remote_id, :string
-      add_column :backtraces, :remote_id, :string
-      add_column :errs, :remote_id, :string
-      add_column :problems, :remote_id, :string
+      add_column :users, :remote_id, :string, :null => false
+      add_column :apps, :remote_id, :string, :null => false
+      add_column :backtraces, :remote_id, :string, :null => false
+      add_column :errs, :remote_id, :string, :null => false
+      add_column :problems, :remote_id, :string, :null => false
+      add_column :comments, :remote_id, :string, :null => false
+      add_column :notices, :remote_id, :string, :null => false
 
+      add_index :users, :remote_id
+      add_index :apps, :remote_id
+      add_index :backtraces, :remote_id
+      add_index :errs, :remote_id
+      add_index :problems, :remote_id
+      add_index :comments, :remote_id
+      add_index :notices, :remote_id
       remove_index :backtraces, :column => :fingerprint
       remove_index :backtrace_lines, :column => :backtrace_id
       remove_index :comments, :column => :user_id
@@ -44,11 +53,13 @@ module DataMigration
     end
 
     def self.down
-      remove_column :users, :remote_id
-      remove_column :apps, :remote_id
-      remove_column :backtraces, :remote_id
-      remove_column :errs, :remote_id
-      remove_column :problems, :remote_id
+      #remove_column :users, :remote_id
+      #remove_column :apps, :remote_id
+      #remove_column :backtraces, :remote_id
+      #remove_column :errs, :remote_id
+      #remove_column :problems, :remote_id
+      #remove_column :comments, :remote_id
+      #remove_column :notices, :remote_id
 
       add_index :backtraces, :fingerprint
       add_index :backtrace_lines, :backtrace_id
@@ -64,7 +75,6 @@ module DataMigration
       add_index :notification_services, :app_id
       add_index :problems, :app_id
       add_index :problems, :app_name
-      add_index :problems, :message
       add_index :problems, :last_notice_at
       add_index :problems, :first_notice_at
       add_index :problems, :resolved_at
@@ -76,142 +86,168 @@ module DataMigration
   end
 
   class Worker
+    # mapping should be a hash {:key_to => :key_from}
+    # value of this hash can be an object and respond to :call, which returns value for new key
     USER_FIELDS_MAPPING = {
-      lambda{|v| v["_id"].to_s} => "remote_id",
-      "github_login" => "github_login",
-      "github_oauth_token" => "github_oauth_token",
-      "name" => "name",
-      "username" => "username",
-      "admin" => "admin",
-      "per_page" => "per_page",
-      "time_zone" => "time_zone",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at",
-      "email" => "email",
-      "encrypted_password" => "encrypted_password",
-      "reset_password_token" => "reset_password_token",
-      "remember_token" => "remember_token",
-      "remember_created_at" => "remember_created_at",
-      "sign_in_count" => "sign_in_count",
-      "current_sign_in_at" => "current_sign_in_at",
-      "last_sign_in_at" => "last_sign_in_at",
-      "current_sign_in_ip" => "current_sign_in_ip",
-      "last_sign_in_ip" => "last_sign_in_ip",
-      "authentication_token" => "authentication_token"
+      :remote_id => lambda{|v| v["_id"].to_s},
+      :github_login => :github_login,
+      :github_oauth_token => :github_oauth_token,
+      :name => :name,
+      :username => :username,
+      :admin => :admin,
+      :per_page => :per_page,
+      :time_zone => :time_zone,
+      :email => :email,
+      :encrypted_password => :encrypted_password,
+      :reset_password_token => :reset_password_token,
+      :remember_token => :remember_token,
+      :remember_created_at => :remember_created_at,
+      :sign_in_count => :sign_in_count,
+      :current_sign_in_at => :current_sign_in_at,
+      :last_sign_in_at => :last_sign_in_at,
+      :current_sign_in_ip => :current_sign_in_ip,
+      :last_sign_in_ip => :last_sign_in_ip,
+      :authentication_token => :authentication_token,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     APP_FIELDS_MAPPING = {
-      lambda{|v| v["_id"].to_s} => "remote_id",
-      "name" => "name",
-      "api_key" => "api_key",
-      "github_repo" => "github_repo",
-      "bitbucket_repo" => "bitbucket_repo",
-      "repository_branch" => "repository_branch",
-      "resolve_errs_on_deploy" => "resolve_errs_on_deploy",
-      "notify_all_users" => "notify_all_users",
-      "notify_on_errs" => "notify_on_errs",
-      "notify_on_deploys" => "notify_on_deploys",
-      "email_at_notices" => "email_at_notices",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :remote_id => lambda{|v| v["_id"].to_s},
+      :name => :name,
+      :api_key => :api_key,
+      :github_repo => :github_repo,
+      :bitbucket_repo => :bitbucket_repo,
+      :repository_branch => :repository_branch,
+      :resolve_errs_on_deploy => :resolve_errs_on_deploy,
+      :notify_all_users => :notify_all_users,
+      :notify_on_errs => :notify_on_errs,
+      :notify_on_deploys => :notify_on_deploys,
+      :email_at_notices => :email_at_notices,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     DEPLOY_FIELDS_MAPPING = {
-      lambda{|v| v["_id"].to_s} => "remote_id",
-      "username" => "username",
-      "repository" => "repository",
-      "environment" => "environment",
-      "revision" => "revision",
-      "message" => "message",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :username => :username,
+      :repository => :repository,
+      :environment => :environment,
+      :revision => :revision,
+      :message => :message,
+      :created_at => :created_at,
+      :updated_at => :updated_at
+    }
+
+    WATCHER_FIELDS_MAPPING = {
+      :email => :email,
+      :user_id => lambda{|v| v["user_id"] ? User.where(:remote_id => v["user_id"].to_s).pluck(:id).first : nil  },
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     PROBLEM_FIELDS_MAPPING = {
-      lambda{|v| v["_id"].to_s} => "remote_id",
-      "last_notice_at" => "last_notice_at",
-      "first_notice_at" => "first_notice_at",
-      "last_deploy_at" => "last_deploy_at",
-      "resolved" => "resolved",
-      "resolved_at" => "resolved_at",
-      "issue_link" => "issue_link",
-      "issue_type" => "issue_type",
-      "app_name" => "app_name",
-      "message" => "message",
-      "environment" => "environment",
-      "error_class" => "error_class",
-      "where" => "where",
-      "user_agents" => "user_agents",
-      "messages" => "messages",
-      "hosts" => "hosts",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :remote_id => lambda{|v| v["_id"].to_s},
+      :app_id => lambda{|v| App.where(:remote_id => v["app_id"].to_s).pluck(:id).first},
+      :last_notice_at => :last_notice_at,
+      :first_notice_at => :first_notice_at,
+      :last_deploy_at => :last_deploy_at,
+      :resolved => :resolved,
+      :resolved_at => :resolved_at,
+      :issue_link => :issue_link,
+      :issue_type => :issue_type,
+      :app_name => :app_name,
+      :notices_count => :notices_count,
+      :comments_count => :comments_count,
+      :message => :message,
+      :environment => :environment,
+      :error_class => :error_class,
+      :where => :where,
+      :user_agents => lambda{|v| normalize_hash(v["user_agents"])},
+      :messages => lambda{|v| normalize_hash(v["messages"])},
+      :hosts => lambda{|v| normalize_hash(v["hosts"])},
+      :created_at => :created_at,
+      :updated_at => :updated_at
+    }
+
+    COMMENT_FIELDS_MAPPING = {
+      :remote_id => lambda{|v| v["_id"].to_s},
+      :body => :body,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     ERR_FIELDS_MAPPING = {
-      lambda{|v| v["_id"].to_s} => "remote_id",
-      "error_class" => "error_class",
-      "component" => "component",
-      "action" => "action",
-      "environment" => "environment",
-      "fingerprint" => "fingerprint",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :remote_id => lambda{|v| v["_id"].to_s},
+      :problem_id => lambda{|v| Problem.where(:remote_id => v["problem_id"].to_s).pluck(:id).first},
+      :error_class => :error_class,
+      :component => :component,
+      :action => :action,
+      :environment => :environment,
+      :fingerprint => :fingerprint,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     BACKTRACE_FIELDS_MAPPING = {
-      lambda{|v| v["_id"].to_s} => "remote_id",
-      "fingerprint" => "fingerprint",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :remote_id => lambda{|v| v["_id"].to_s},
+      :fingerprint => :fingerprint,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     BACKTRACE_LINE_FIELDS_MAPPING = {
-      "number" => "number",
-      "file" => "file",
-      "method" => "method",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :number => :number,
+      :file => :file,
+      :method => :methopointd,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     NOTICE_FIELDS_MAPPING = {
-      lambda{|v| v["_id"].to_s} => "remote_id",
-      "message" => "message",
-      "server_environment" => "server_environment",
-      "request" => "request",
-      "notifier" => "notifier",
-      "user_attributes" => "user_attributes",
-      "framework" => "framework",
-      "current_user" => "current_user",
-      "error_class" => "error_class",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :remote_id => lambda{|v| v["_id"].to_s},
+      :err_id => lambda{|v| Err.where(:remote_id => v["err_id"].to_s).pluck(:id).first},
+      :backtrace_id => lambda{|v| Backtrace.where(:remote_id => v["backtrace_id"].to_s).pluck(:id).first},
+      :server_environment => lambda{|v| normalize_hash(v["server_environment"])},
+      :request => lambda{|v| normalize_hash(v["request"])},
+      :notifier => lambda{|v| normalize_hash(v["notifier"])},
+      :user_attributes => lambda{|v| normalize_hash(v["user_attributes"])},
+      :current_user => lambda{|v| normalize_hash(v["current_user"])},
+      :message => :message,
+      :framework => :framework,
+      :error_class => :error_class,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     ISSUE_TRACKER_FIELDS_MAPPING = {
-      "project_id" => "project_id",
-      "alt_project_id" => "alt_project_id",
-      "api_token" => "api_token",
-      "account" => "account",
-      "username" => "username",
-      "password" => "password",
-      "ticket_properties" => "ticket_properties",
-      "subdomain" => "subdomain",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :project_id => :project_id,
+      :alt_project_id => :alt_project_id,
+      :api_token => :api_token,
+      :account => :account,
+      :username => :username,
+      :password => :password,
+      :ticket_properties => :ticket_properties,
+      :subdomain => :subdomain,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
 
     NOTIFICATION_SERVICE_FIELDS_MAPPING = {
-      "room_id" => "room_id",
-      "user_id" => "user_id",
-      "service_url" => "service_url",
-      "service" => "service",
-      "api_token" => "api_token",
-      "subdomain" => "subdomain",
-      "sender_name" => "sender_name",
-      "created_at" => "created_at",
-      "updated_at" => "updated_at"
+      :room_id => :room_id,
+      :user_id => :user_id,
+      :service_url => :service_url,
+      :service => :service,
+      :api_token => :api_token,
+      :subdomain => :subdomain,
+      :sender_name => :sender_name,
+      :created_at => :created_at,
+      :updated_at => :updated_at
     }
+
+    # get instance of Hash class from BSON::OrderedHash
+    def self.normalize_hash(hash)
+      ActiveSupport::JSON.decode(hash.to_json)
+    end
 
     attr_reader :db, :mongo_client
 
@@ -221,6 +257,7 @@ module DataMigration
       config[:port] ||= 27017
       @mongo_client = MongoClient.new(config[:host], config[:port])
       @db = @mongo_client[config[:database].to_s]
+      @import_options = {:timestamps => false}
     end
 
     def start
@@ -244,6 +281,7 @@ module DataMigration
     end
 
     def db_prepare
+      return if Notice.column_names.include? "remote_id"
       DBPrepareMigration.migrate :up
     end
 
@@ -251,102 +289,146 @@ module DataMigration
       DBPrepareMigration.migrate :down
     end
 
-
     def copy_users
-      find_each(db[:users]) do |old_user|
+      last_user = User.last
+      options = {}
+
+      if last_user
+        remote_id = last_user.remote_id
+        options.deep_merge!({"_id" => {'$gt' => BSON::ObjectId(remote_id)}})
+      end
+
+      find_each(db[:users], options) do |old_user|
         copy_user(old_user)
       end
     end
 
     def copy_apps
-      find_each(db[:apps]) do |old_app|
-        app = copy_app(old_app)
-        copy_watchers(old_app, app)
-        copy_deploys(old_app, app)
+      last_app = App.last
+      options = {}
+
+      if last_app
+        remote_id = last_app.remote_id
+        options.deep_merge!({"_id" => {'$gt' => remote_id}})
       end
-    end
 
-    def copy_watchers(old_app, app)
-      if old_app["watchers"]
-        counter = 0
-        total = old_app["watchers"].count
-        log "  Start copy watchers, total: #{total}"
-
-        old_app["watchers"].each do |watcher|
-          log "    copying [watcher] ##{counter += 1} of #{total} with id '#{watcher['_id']}'"
-
-          copy_watcher(app, watcher)
-        end
+      find_each(db[:apps], options) do |old_app|
+        app = copy_app(old_app)
+        copy_deploys(old_app, app)
+        copy_watchers(old_app, app)
       end
     end
 
     def copy_deploys(old_app, app)
-      if old_app["deploys"]
-        counter = 0
-        total = old_app["deploys"].count
-        log "  Start copy deploys, total: #{total}"
+      return unless old_app["deploys"]
 
-        deploys = []
-        old_app["deploys"].each do |deploy|
-          log "    copying [deploy] ##{counter += 1} of #{total} with id '#{deploy['_id']}'"
+      counter = 0
+      total = old_app["deploys"].count
+      log "  Start copy deploys, total: #{total}"
 
-          deploys << copy_deploy(app, deploy)
-          Deploy.import deploys.slice!(0..deploys.count) if deploys.count > 50
-        end
-        Deploy.import deploys
+      old_app["deploys"].each do |deploy|
+        log "    copying [deploy] ##{counter += 1} of #{total} with id '#{deploy['_id']}'"
+        deploy = copy_deploy(app, deploy)
+        deploy.save!
+      end
+    end
+
+    def copy_watchers(old_app, app)
+      return unless old_app["watchers"]
+      counter = 0
+      total = old_app["watchers"].count
+      log "  Start copy watchers, total: #{total}"
+
+      old_app["watchers"].each do |watcher|
+        log "    copying [watcher] ##{counter += 1} of #{total} with id '#{watcher['_id']}'"
+
+        copy_watcher(app, watcher)
       end
     end
 
     def copy_problems
-      problems = []
-      find_each(db[:problems]) do |old_problem|
-        copy_problem(old_problem)
-        #if problems.count > 50
-          #Problem.import problems
-          #problems = []
-        #end
+      last_problem = Problem.last
+      options = {}
+
+      if last_problem
+        remote_id = last_problem.remote_id
+        options.deep_merge!({"_id" => {'$gt' => BSON::ObjectId(remote_id)}})
       end
-      #Problem.import problems
+
+      columns = PROBLEM_FIELDS_MAPPING.keys
+      values = []
+      find_each(db[:problems], options) do |old_problem|
+        values << get_values(PROBLEM_FIELDS_MAPPING, old_problem)
+        import_values_for(Problem, columns, values, @import_options.merge(:batch => 50, :validate => false))
+      end
+      import_values_for(Problem, columns, values, @import_options.merge(:validate => false))
     end
 
     def copy_comments
-      comments = []
-      find_each(db[:comments]) do |old_comment|
-        comments << copy_comment(old_comment)
-        if comments.count > 50
-          Comment.import comments
-          comments = []
-        end
+      last_comment = Comment.last
+      options = {}
+
+      if last_comment
+        remote_id = last_comment.remote_id
+        options.deep_merge!({"_id" => {'$gt' => BSON::ObjectId(remote_id)}})
       end
-      Comment.import comments
+
+      columns = COMMENT_FIELDS_MAPPING.keys
+      values = []
+      find_each(db[:comments], options) do |old_comment|
+        values << get_values(COMMENT_FIELDS_MAPPING, old_comment)
+        import_values_for(Comment, columns, values, @import_options.merge(:batch => 50))
+      end
+      import_values_for(Comment, columns, values, @import_options)
     end
 
     def copy_errs
-      errs = []
-      find_each(db[:errs]) do |old_err|
-        errs << copy_err(old_err)
-        if errs.count > 50
-          Err.import errs
-          errs = []
-        end
+      last_err = Err.last
+      options = {"problem_id" => {"$exists" => true}}
+
+      if last_err
+        remote_id = last_err.remote_id
+        options.deep_merge!({"_id" => {'$gt' => BSON::ObjectId(remote_id)}})
       end
-      Err.import errs
+
+      columns = ERR_FIELDS_MAPPING.keys
+      values = []
+      find_each(db[:errs], options) do |old_err|
+        values << get_values(ERR_FIELDS_MAPPING, old_err)
+        import_values_for(Err, columns, values, @import_options.merge(:batch => 50, :validate => false))
+      end
+      import_values_for(Err, columns, values, @import_options.merge(:validate => false))
     end
 
     def copy_notices
-      notices = []
-      find_each(db[:notices]) do |old_notice|
-        notices << copy_notice(old_notice)
-        if notices.count > 50
-          Notice.import notices
-          notices = []
-        end
+      last_notice = Notice.last
+      options = {}
+
+      if last_notice
+        remote_id = last_notice.remote_id
+        options.deep_merge!({"_id" => {'$gt' => BSON::ObjectId(remote_id)}})
       end
-      Notice.import notices
+
+      columns = NOTICE_FIELDS_MAPPING.keys
+      values = []
+      find_each(db[:notices], options) do |old_notice|
+        values << get_values(NOTICE_FIELDS_MAPPING, old_notice)
+        import_values_for(Notice, columns, values, @import_options.merge(:batch => 50, :validate => false))
+      end
+      import_values_for(Notice, columns, values, @import_options.merge(:validate => false))
     end
 
     def copy_backtraces
-      find_each(db[:backtraces]) do |old_backtrace|
+      last_backtrace = Backtrace.last
+      options = {}
+
+      if last_backtrace
+        remote_id = last_backtrace.remote_id
+        last_backtrace.lines.destroy_all
+        options.deep_merge!({"_id" => {'$gt' => BSON::ObjectId(remote_id)}})
+      end
+
+      find_each(db[:backtraces], options) do |old_backtrace|
         copy_backtrace(old_backtrace)
       end
     end
@@ -420,57 +502,6 @@ module DataMigration
         deploy
       end
 
-      def copy_err(old_err)
-        err = Err.new
-
-        problem = Problem.find_by_remote_id(old_err["problem_id"].to_s)
-        err.problem = problem
-
-        copy_from_mapping(ERR_FIELDS_MAPPING, old_err, err)
-
-        err
-      end
-
-      def copy_notice(old_notice)
-        notice = Notice.new
-
-        copy_from_mapping(NOTICE_FIELDS_MAPPING, old_notice, notice)
-
-        err = Err.find_by_remote_id(old_notice["err_id"].to_s)
-        notice.err = err
-
-        backtrace = Backtrace.find_by_remote_id(old_err["backtrace_id"].to_s)
-        notice.backtrace = backtrace
-
-        notice
-      end
-
-      def copy_comment(old_comment)
-        comment = Comment.new
-
-        problem = Problem.find_by_remote_id(old_comment["err_id"].to_s) if old_comment["err_id"]
-        comment.problem = problem
-
-        user = User.find_by_remote_id(old_comment["user_id"].to_s) if old_comment["user_id"]
-        comment.user = user
-
-        copy_from_mapping(COMMENT_FIELDS_MAPPING, old_comment, comment)
-
-        comment
-      end
-
-      def copy_problem(old_problem)
-        problem = Problem.new
-
-        app = App.find_by_remote_id(old_problem["app_id"].to_s)
-        problem.app = app
-
-        copy_from_mapping(PROBLEM_FIELDS_MAPPING, old_problem, problem)
-
-        problem.save!
-        problem
-      end
-
       def copy_backtrace(old_backtrace)
         backtrace = Backtrace.new
         copy_from_mapping(BACKTRACE_FIELDS_MAPPING, old_backtrace, backtrace)
@@ -497,12 +528,12 @@ module DataMigration
         line
       end
 
-      def find_each(collection)
+      def find_each(collection, options = {})
         counter = 0
-        total = collection.count
+        total = collection.find(options).count
         log "Start copy #{collection.name}, total: #{total}"
 
-        collection.find({}, :timeout => false) do |cursor|
+        collection.find(options, :timeout => false, :sort => ["_id", "asc"]) do |cursor|
           counter = 0
           cursor.each do |item|
             log "  copying [#{collection.name}] ##{counter += 1} of #{total} with id '#{item["_id"]}'"
@@ -512,13 +543,35 @@ module DataMigration
       end
 
       def copy_from_mapping(map_hash, copy_from, copy_to)
-        map_hash.each do |from_key, to_key|
+        map_hash.each do |to_key, from_key|
           if from_key.respond_to? :call
-            copy_to[to_key] = from_key.call(copy_from)
+            copy_to.send("#{to_key}=", from_key.call(copy_from))
           else
-            copy_to[to_key] = copy_from[from_key] if copy_from.has_key? from_key
+            from_key = from_key.to_s
+            copy_to.send("#{to_key}=", copy_from[from_key]) if copy_from.has_key? from_key
           end
         end
+      end
+
+      def import_values_for(klass, columns, values, options = {})
+        batch_size = options.delete(:batch)
+        if !batch_size || (values.count >= batch_size)
+          klass.import columns, values, options
+          values.clear
+        end
+      end
+
+      def get_values(map_hash, copy_from)
+        copy_to = []
+        map_hash.each do |to_key, from_key|
+          copy_to << if from_key.respond_to? :call
+            from_key.call(copy_from)
+          else
+            from_key = from_key.to_s
+            copy_from[from_key] if copy_from.has_key? from_key
+          end
+        end
+        copy_to
       end
 
       def log(message)

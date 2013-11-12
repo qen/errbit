@@ -111,7 +111,7 @@ class AppsController < InheritedResources::Base
     #NOTE: need for support old urls
     def redirect_if_old_url
       if params[:id].match(/^[0-9]+$/)
-        @app = App.find!(params[:id])
+        @app = App.find(params[:id])
       else
         @app = App.find_by_remote_id!(params[:id])
         redirect_to app_path(@app)

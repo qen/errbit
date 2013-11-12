@@ -13,13 +13,13 @@ module DataMigration
 
   class DBPrepareMigration < ActiveRecord::Migration
     def self.up
-      add_column :users, :remote_id, :string, :null => false
-      add_column :apps, :remote_id, :string, :null => false
-      add_column :backtraces, :remote_id, :string, :null => false
-      add_column :errs, :remote_id, :string, :null => false
-      add_column :problems, :remote_id, :string, :null => false
-      add_column :comments, :remote_id, :string, :null => false
-      add_column :notices, :remote_id, :string, :null => false
+      add_column :users, :remote_id, :string
+      add_column :apps, :remote_id, :string
+      add_column :backtraces, :remote_id, :string
+      add_column :errs, :remote_id, :string
+      add_column :problems, :remote_id, :string
+      add_column :comments, :remote_id, :string
+      add_column :notices, :remote_id, :string
 
       add_index :users, :remote_id
       add_index :apps, :remote_id

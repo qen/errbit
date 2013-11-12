@@ -1,6 +1,7 @@
 class AppsController < InheritedResources::Base
   before_filter :require_admin!, :except => [:index, :show]
   before_filter :parse_email_at_notices_or_set_default, :only => [:create, :update]
+  before_filter :redirect_if_old_url, :only => [:show]
   respond_to :html
 
   def show
@@ -104,6 +105,16 @@ class AppsController < InheritedResources::Base
           default_array = params[:app][:email_at_notices] = Errbit::Config.email_at_notices
           flash[:error] = "Couldn't parse your notification frequency. Value was reset to default (#{default_array.join(', ')})."
         end
+      end
+    end
+
+    #NOTE: need for support old urls
+    def redirect_if_old_url
+      if params[:id].match(/^[0-9]+$/)
+        @app = App.find!(params[:id])
+      else
+        @app = App.find_by_remote_id!(params[:id])
+        redirect_to app_path(@app)
       end
     end
 end

@@ -60,7 +60,12 @@ class UsersController < ApplicationController
   protected
 
     def find_user
-      @user = User.find(params[:id])
+      if params[:id].match(/^[0-9]+$/)
+        @user = User.find(params[:id])
+      else
+        @user = User.find_by_remote_id(params[:id])
+        redirect_to user_path @user
+      end
     end
 
     def require_user_edit_priviledges

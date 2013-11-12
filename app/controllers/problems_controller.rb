@@ -93,11 +93,20 @@ class ProblemsController < ApplicationController
 
   protected
     def find_app
-      @app = current_user.admin? ? App.find(params[:app_id]) : current_user.apps.find(params[:app_id])
+      app_id = params[:app_id]
+      if !app_id.match(/^[0-9]+$/)
+        app_id = App.find_by_remote_id(app_id).id
+      end
+      @app = current_user.admin? ? App.find(app_id) : current_user.apps.find(app_id)
     end
 
     def find_problem
-      @problem = @app.problems.find(params[:id])
+      if !params[:id].match(/^[0-9]+$/)
+        @problem = @app.problems.find_by_remote_id(params[:id])
+        redirect_to app_problem_path @app, @problem
+      else
+        @problem = @app.problems.find(params[:id])
+      end
     end
 
     def set_tracker_params

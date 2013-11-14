@@ -167,7 +167,6 @@ class Problem < ActiveRecord::Base
       :environment => notice.environment_name,
       :error_class => notice.error_class,
       :where       => notice.where,
-      :messages    => attribute_count_increase(:messages, notice.message),
       :hosts       => attribute_count_increase(:hosts, notice.host),
       :user_agents => attribute_count_increase(:user_agents, notice.user_agent_string)
     ) if notice
@@ -176,10 +175,20 @@ class Problem < ActiveRecord::Base
 
   def remove_cached_notice_attributes(notice)
     update_attributes!(
-      :messages    => attribute_count_descrease(:messages, notice.message),
       :hosts       => attribute_count_descrease(:hosts, notice.host),
       :user_agents => attribute_count_descrease(:user_agents, notice.user_agent_string)
     )
+  end
+
+  #FIXME: проблема при разношерстных мессаджах (PID, Time, etc.) Их становится слишком много и эррбит тормозит на запись
+  def messages
+    m = notices.group(:message).count
+    @messages = {}
+    m.each_pair do |key, value|
+      index = attribute_index(key)
+      @messages[index] = {'count' => value, 'value' => key}
+    end
+    @messages
   end
 
   def issue_type

@@ -2,6 +2,8 @@ class BacktraceLine < ActiveRecord::Base
   IN_APP_PATH = %r{^\[PROJECT_ROOT\](?!(\/vendor))/?}
   GEMS_PATH   = %r{\[GEM_ROOT\]\/gems\/([^\/]+)}
 
+  alias_attribute :method_name, :method
+
 #  field :number, :type => Integer
 #  field :file
 #  field :method

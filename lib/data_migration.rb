@@ -28,61 +28,8 @@ module DataMigration
       add_index :problems, :remote_id
       add_index :comments, :remote_id
       add_index :notices, :remote_id
-      remove_index :backtraces, :column => :fingerprint
-      remove_index :backtrace_lines, :column => :backtrace_id
-      remove_index :comments, :column => :user_id
-      remove_index :comments, :column => :problem_id
-      remove_index :deploys, :column => :app_id
-      remove_index :errs, :column => :problem_id
-      remove_index :errs, :column => :error_class
-      remove_index :errs, :column => :fingerprint
-      remove_index :issue_trackers, :column => :app_id
-      remove_index :notices, :column => [:err_id, :created_at, :id]
-      remove_index :notices, :column => :backtrace_id
-      remove_index :notification_services, :column => :app_id
-      remove_index :problems, :column => :app_id
-      remove_index :problems, :column => :app_name
-      remove_index :problems, :column => :message
-      remove_index :problems, :column => :last_notice_at
-      remove_index :problems, :column => :first_notice_at
-      remove_index :problems, :column => :resolved_at
-      remove_index :problems, :column => :notices_count
-      remove_index :problems, :column => :comments_count
-      remove_index :watchers, :column => :app_id
-      remove_index :watchers, :column => :user_id
     end
 
-    def self.down
-      #remove_column :users, :remote_id
-      #remove_column :apps, :remote_id
-      #remove_column :backtraces, :remote_id
-      #remove_column :errs, :remote_id
-      #remove_column :problems, :remote_id
-      #remove_column :comments, :remote_id
-      #remove_column :notices, :remote_id
-
-      add_index :backtraces, :fingerprint
-      add_index :backtrace_lines, :backtrace_id
-      add_index :comments, :user_id
-      add_index :comments, :problem_id
-      add_index :deploys, :app_id
-      add_index :errs, :problem_id
-      add_index :errs, :error_class
-      add_index :errs, :fingerprint
-      add_index :issue_trackers, :app_id
-      add_index :notices, [:err_id, :created_at, :id]
-      add_index :notices, :backtrace_id
-      add_index :notification_services, :app_id
-      add_index :problems, :app_id
-      add_index :problems, :app_name
-      add_index :problems, :last_notice_at
-      add_index :problems, :first_notice_at
-      add_index :problems, :resolved_at
-      add_index :problems, :notices_count
-      add_index :problems, :comments_count
-      add_index :watchers, :app_id
-      add_index :watchers, :user_id
-    end
   end
 
   class Worker
@@ -271,8 +218,6 @@ module DataMigration
       copy_errs
       copy_backtraces
       copy_notices
-
-      db_clean
     end
 
     def app_prepare
@@ -283,10 +228,6 @@ module DataMigration
     def db_prepare
       return if Notice.column_names.include? "remote_id"
       DBPrepareMigration.migrate :up
-    end
-
-    def db_clean
-      DBPrepareMigration.migrate :down
     end
 
     def copy_users

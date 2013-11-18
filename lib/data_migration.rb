@@ -147,7 +147,7 @@ module DataMigration
     BACKTRACE_LINE_FIELDS_MAPPING = {
       :number => :number,
       :file => :file,
-      :method => :methopointd,
+      :method => :method,
       :created_at => :created_at,
       :updated_at => :updated_at
     }
@@ -220,6 +220,8 @@ module DataMigration
       copy_errs
       copy_backtraces
       copy_notices
+
+      update_states
     end
 
     def app_prepare
@@ -373,6 +375,20 @@ module DataMigration
 
       find_each(db[:backtraces], options) do |old_backtrace|
         copy_backtrace(old_backtrace)
+      end
+    end
+
+    def update_states
+      find_each(db[:problems], {}) do |old_problem|
+        p = Problem.find_by_remote_id(old_problem["_id"].to_s)
+        p.resolved = old_problem["resolved"]
+        p.resolved_at = old_problem["resolved_at"]
+        p.notices_count = old_problem["notices_count"]
+        p.comments_count = old_problem["comments_count"]
+        p.last_notice_at = old_problem["last_notice_at"]
+        p.first_notice_at = old_problem["first_notice_at"]
+        p.last_deploy_at = old_problem["last_deploy_at"]
+        p.save
       end
     end
 

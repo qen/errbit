@@ -118,6 +118,8 @@ module DataMigration
 
     COMMENT_FIELDS_MAPPING = {
       :remote_id => lambda{|v| v["_id"].to_s},
+      :user_id => lambda{|v| User.where(:remote_id => v["user_id"].to_s).pluck(:id).first},
+      :problem_id => lambda{|v| Problem.where(:remote_id => v["err_id"].to_s).pluck(:id).first},
       :body => :body,
       :created_at => :created_at,
       :updated_at => :updated_at

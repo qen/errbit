@@ -130,7 +130,6 @@ group :heroku, :production do
 end
 
 gem 'execjs'
-gem 'therubyracer', :platform => :ruby  # C Ruby (MRI) or Rubinius, but NOT Windows
 gem 'uglifier',     '>= 1.0.3'
 # We can't upgrade because not compatible to jquery >= 1.9.
 # To do that, we need fix the rails.js

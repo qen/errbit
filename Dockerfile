@@ -44,3 +44,4 @@ RUN rm -rf /var/lib/apt/lists/*
 
 CMD ["/usr/bin/supervisord"]
 
+# docker run -d --net host --name errbit errbit

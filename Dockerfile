@@ -16,8 +16,8 @@ RUN useradd -s /bin/bash -m errbit
 RUN chown -R errbit:errbit $APP_PATH
 
 # allow user errbit
-RUN sed -i '88i host all root localhost trust' /etc/postgresql/9.4/main/pg_hba.conf
-RUN sed -i '88i host all errbit localhost trust' /etc/postgresql/9.4/main/pg_hba.conf
+RUN sed -i '88i host all root 127.0.0.1/32 trust' /etc/postgresql/9.4/main/pg_hba.conf
+RUN sed -i '88i host all errbit 127.0.0.1/32 trust' /etc/postgresql/9.4/main/pg_hba.conf
 
 USER root
 COPY config/supervisord/supervisord.conf /etc/supervisor/conf.d/errbit.conf

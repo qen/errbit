@@ -35,6 +35,8 @@ WORKDIR $APP_PATH/current
 USER errbit
 RUN bundle install --without development:test --deployment
 RUN echo "Errbit::Application.config.secret_token = '$(bundle exec rake secret)'" > $APP_PATH/current/config/initializers/__secret_token.rb
+RUN mkdir $APP_PATH/current/tmp
+RUN mkdir $APP_PATH/current/log
 
 USER root
 WORKDIR $APP_PATH/current

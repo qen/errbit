@@ -1,9 +1,12 @@
 FROM ruby:2.1.5-slim
 
 RUN apt-get update && apt-get upgrade -y
-RUN apt-get install -y postgresql-9.4 supervisor redis-server git ssh vim curl nodejs libcurl4-openssl-dev libpq-dev build-essential libxml2-dev libxslt1-dev
+RUN apt-get install -y postgresql-9.4 supervisor redis-server git ssh vim curl nodejs libcurl4-openssl-dev libpq-dev build-essential libxml2-dev libxslt1-dev nginx
 RUN mkdir -p /var/log/supervisor
 RUN echo "alias ll='ls -alh'" >> /etc/bash.bashrc
+
+# setup nginx
+#RUN echo "\ndaemon off;" >> /etc/nginx/nginx.conf && chown -R www-data:www-data /var/lib/nginx
 
 ENV RAILS_ENV production
 ENV APP_PATH /var/www/errbit
@@ -35,7 +38,7 @@ RUN echo "Errbit::Application.config.secret_token = '$(bundle exec rake secret)'
 
 USER root
 WORKDIR $APP_PATH/current
-RUN /etc/init.d/postgresql start && su errbit -c 'bin/rake db:migrate db:seed RAILS_ENV=production'
+RUN /etc/init.d/postgresql start && su errbit -c 'bin/rake db:migrate db:seed assets:precompile RAILS_ENV=production'
 
 # finalize
 # Add VOLUMEs to allow backup of config, logs and databases
